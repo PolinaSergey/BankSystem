@@ -48,17 +48,16 @@ class DepositContract(models.Model):
     def close_day(self):
         self.days_left -= 1
 
-        if (self.deposit_program.duration * 30 - self.days_left) % 30:
-            day_percent = self.deposit_program.percent / 30
-            day_proceeds = self.main_account.credit * Decimal(day_percent) / 100
-            bank_account = Account.objects.get(code='7327', currency=self.deposit_program.currency)
-            with atomic():
-                bank_account.withdrawal(day_proceeds)
-                self.percent_account.refill(day_proceeds)
+        day_percent = self.deposit_program.percent / 30
+        day_proceeds = self.main_account.credit * Decimal(day_percent) / 100
+        bank_account = Account.objects.get(code='7327', currency=self.deposit_program.currency)
+        with atomic():
+            bank_account.withdrawal(day_proceeds)
+            self.percent_account.refill(day_proceeds)
 
         if (self.deposit_program.duration * 30 - self.days_left) % 30 == 0 and \
                 self.days_left != 0 and \
-                self.deposit_program.deposit_type != 'Безотзывный':
+                self.deposit_program.deposit_type.name != 'Безотзывный':
             month_proceed = self.percent_account.balance
             cash_account = Account.objects.get(code='1010', currency=self.deposit_program.currency)
 
@@ -96,6 +95,6 @@ class DepositContract(models.Model):
 
         cash_account.withdrawal(month_proceed)
 
-        self.end_date = self.start_date + timedelta(days=self.deposit_program.duration * 30)
+        self.end_date = self.start_date + timedelta(days=(self.deposit_program.duration * 30) - self.days_left)
         self.closed = True
         self.save()

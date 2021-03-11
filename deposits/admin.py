@@ -11,7 +11,7 @@ class DepositContractAdminForm(forms.ModelForm):
         self.fields['deposit_program'].queryset = DepositProgram.objects.filter(active=True)
 
     class Meta:
-        fields = ('deposit_program','client', 'start_date', 'amount')
+        fields = ('deposit_program', 'client', 'start_date', 'amount')
 
     def save(self, commit=True):
         deposit = super(DepositContractAdminForm, self).save(commit=False)

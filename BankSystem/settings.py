@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'common.apps.CommonConfig',
     'deposits.apps.DepositsConfig',
+    'credits.apps.CreditsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
